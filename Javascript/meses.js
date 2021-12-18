@@ -1,12 +1,12 @@
 
 
 class NodoMeses{
-    constructor(mes){
-        this.numeroMes = 0;
+    constructor(numeroMes,mes){
+        this.numeroMes = numeroMes;
         this.mes = mes
         this.siguiente = null;
         this.anterior = null;
-        this.calendario = null;
+        //this.calendario = new Calendario();
     }
 }
 
@@ -15,9 +15,8 @@ class ListaMeses{
         this.inicio = null;
     }
 
-    insertarMes(mes){
-        let nuevoMes = new NodoMeses(mes);
-        this.numeroDeMes(nuevoMes);
+    insertarMes(numeroMes,mes){
+        let nuevoMes = new NodoMeses(numeroMes,mes);
         if(this.inicio == null){
             this.inicio = nuevoMes;
         }else{
@@ -52,33 +51,6 @@ class ListaMeses{
         }
     }
 
-    numeroDeMes(nodoMes){
-        if(nodoMes.mes == 'enero'){
-            nodoMes.numeroMes = 1;
-        }else if(nodoMes.mes == 'febrero'){
-            nodoMes.numeroMes = 2;
-        }else if(nodoMes.mes == 'marzo'){
-            nodoMes.numeroMes = 3;
-        }else if(nodoMes.mes == 'abril'){
-            nodoMes.numeroMes = 4;
-        }else if(nodoMes.mes == 'mayo'){
-            nodoMes.numeroMes = 5;
-        }else if(nodoMes.mes == 'junio'){
-            nodoMes.numeroMes = 6;
-        }else if(nodoMes.mes == 'julio'){
-            nodoMes.numeroMes = 7;
-        }else if(nodoMes.mes == 'agosto'){
-            nodoMes.numeroMes = 8;
-        }else if(nodoMes.mes == 'septiembre'){
-            nodoMes.numeroMes = 9;
-        }else if(nodoMes.mes == 'octubre'){
-            nodoMes.numeroMes = 10;
-        }else if(nodoMes.mes == 'noviembre'){
-            nodoMes.numeroMes = 11;
-        }else if(nodoMes.mes == 'diciembre'){
-            nodoMes.numeroMes = 12;
-        }
-    }
 
     tamanoLista(){
         let contador = 0;
@@ -102,10 +74,32 @@ class ListaMeses{
             temp = temp.siguiente
         }
     }
+
+    graficarMeses(){
+        let texto = ""
+        let temp = this.inicio;
+        texto = "digraph Meses{\n"
+        while(temp != null){
+            texto += "\tnode[label="+'"'+"Mes: "+ temp.mes +'"]'+temp.numeroMes+"\n"; 
+            temp = temp.siguiente
+        }
+        temp = this.inicio;
+        while(temp.siguiente != null){
+            texto += "\t"+temp.numeroMes+"->"+temp.siguiente.numeroMes+"\n";
+            texto += "\t"+temp.siguiente.numeroMes+"->"+temp.numeroMes+"\n";
+            temp = temp.siguiente
+        }
+
+        texto +="}"
+
+        return texto;
+    }
 }
 
 let meses = new ListaMeses()
-meses.insertarMes('diciembre');
-meses.insertarMes('febrero');
+meses.insertarMes(12,'Diciembre');
+meses.insertarMes(2,'febrero');
 
-meses.MostrarMeses();
+let graficaMeses = meses.graficarMeses();
+
+console.log(graficaMeses);

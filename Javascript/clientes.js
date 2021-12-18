@@ -29,15 +29,71 @@ class ListaCliente{
         }
     }
 
-    mostrarLista(){
-        let temp = this.inicio;
-        while(temp != null){
-            console.log("id: "+temp.id+", nombre: "+temp.nombre+", correo: "+temp.correo)
-            temp = temp.siguiente
+
+    EliminarCliente(id){
+        if(this.inicio != null){
+            let temp = this.inicio;
+            while(temp.siguiente != null){
+                if(temp.id == id){
+                    temp.anterior.siguiente = temp.siguiente;
+                    temp.siguiente.anterior = temp.anterior;
+                    temp.id = '';
+                    temp.nombre = ''
+                    temp.correo = '';
+                }
+                temp = temp.siguiente;
+            }
         }
     }
 
+    obtenerCliente(id){
+        if(this.inicio != null){
+            let temp = this.inicio;
+            while(temp.siguiente != null){
+                if(temp.id == id){
+                    return temp;
+                }
+                temp = temp.siguiente;
+            }
+        }else{
+            alert("Error: lista de clientes vacia");
+            return null;
+        }
+
+    }
+
+    Graficar(){
+        let texto = ""
+        let temp = this.inicio;
+        texto = "digraph Clientes{\n"
+        while(temp != null){
+            texto += "\tnode[label="+'"'+"cliente: "+ temp.nombre +" correo: "+temp.correo+'"]'+temp.id+"\n"; 
+            temp = temp.siguiente
+        }
+        temp = this.inicio;
+        while(temp.siguiente != null){
+            texto += "\t"+temp.id+"->"+temp.siguiente.id+"\n";
+            texto += "\t"+temp.siguiente.id+"->"+temp.id+"\n";
+            temp = temp.siguiente
+        }
+
+        texto +="}"
+
+        return texto;
+
+    }
+
+
     
 }
+
+let listaPrueba = new ListaCliente();
+
+listaPrueba.agregarCliente(0,"sebastian","sebas@gmail.com");
+listaPrueba.agregarCliente(1,"admin","admin@yahoo.com");
+
+let grafica = listaPrueba.Graficar();
+
+console.log(grafica)
 
 
