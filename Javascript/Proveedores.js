@@ -19,8 +19,9 @@ class ArbolProveedores{
         let nuevoProveedor = new NodoProveedor(id,nombre,direccion,telefono,correo);
         if(this.inicio == null){
             this.inicio = nuevoProveedor;
+            return this.inicio;
         }else{
-            this.agregarProveedor(this.inicio,nuevoProveedor);
+            return this.agregarProveedor(this.inicio,nuevoProveedor);
         }
     }
     agregarProveedor(proveedorActual,nuevoProveedor){
@@ -33,7 +34,7 @@ class ArbolProveedores{
             }else if(nuevoProveedor.id > proveedorActual.id){
                 proveedorActual.derecha = this.agregarProveedor(proveedorActual.derecha,nuevoProveedor);
             }else{
-                alert("Error: el proveedor ya existe");
+                return null;
             }
             return proveedorActual;
         }
@@ -52,14 +53,13 @@ class ArbolProveedores{
             return proveedorActual;
         }else{
             let temp = proveedorActual;
-            if(temp.id < id){
-                temp.izquierda = this.obtenerProveedor(temp.izquierda,id);
-            }else if(temp > id){
-                temp.derecha = this.obtenerProveedor(temp.derecha,id);
+            if(temp.id > id){
+                return this.obtenerProveedor(temp.izquierda,id);
+            }else if(temp.id < id){
+                return this.obtenerProveedor(temp.derecha,id);
             }else{
                 alert('Error: No se encontro al proveedor');
             }
-            return proveedorActual;
         }
     }
 

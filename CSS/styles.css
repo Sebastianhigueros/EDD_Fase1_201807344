@@ -1,31 +1,35 @@
 
 body{
     background-color: #E0E0E0;
+    margin: 0%;
 }
 .titulo{
     text-align: center;
     font-family: 'Roboto', sans-serif;
 }
 
-.login{
+.login, .info{
     margin: auto;
     margin-top: 10%;
     padding: 5%;
     width: 30%;
     background-color:#FCFAFA;
+    border-radius:  15px;
+}
+.carga{
+    margin: auto;
+    margin-top: 5%;
+    padding: 5%;
+    width: 30%;
+    background-color:#FCFAFA;
+    border-radius:  15px;
 }
 
-.loginForm{
+.loginForm, .cargaform, .grafform{
     margin: auto;
     padding: 5px;
 }
 
-.loginForm input{
-    padding: 15px;
-    margin-bottom: 5px;
-    width: 315px;
-    font-family: 'Roboto', sans-serif;
-}
 
 .loginForm input{
     padding: 15px;
@@ -49,4 +53,56 @@ body{
 }
 .loginForm button:active{
     background-color:#15ff00;
+}
+
+.dropdown{
+    display: inline-block;
+    position: relative;
+}
+
+.content{
+    background-color: #E0E0E0;
+    display: none;
+    position: absolute;
+    width: 100%;
+    overflow: auto;
+}
+
+.dropdown:hover .content{
+    background-color: #15ff00;
+    display: block;
+}
+
+#links{
+    color: black;
+    text-decoration: none;
+    display: block;
+    padding: 5px 12px;
+
+}
+#links:hover{
+    background-color: #19f306;
+}
+.dropbtn{
+    background-color: #1df00a;
+    padding: 15px;
+    border: none;
+    width: 315px;
+}
+
+.navbar{
+    padding: 0%;
+    margin: 0%;
+}
+
+.material-icons .md-60{
+    font-size: 60px !important;
+}
+
+#graficas{
+    margin: auto;
+    margin-top: 10%;
+    padding: 5%;
+    width: 30%;
+    background-color:#FCFAFA;
 }

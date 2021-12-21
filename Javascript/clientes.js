@@ -18,6 +18,7 @@ class ListaCliente{
 
         if(this.inicio == null){
             this.inicio = nuevoCliente;
+            return this.inicio;
         }else{
             let temp = this.inicio;
 
@@ -26,6 +27,7 @@ class ListaCliente{
             }
             temp.siguiente = nuevoCliente;
             nuevoCliente.anterior = temp;
+            return nuevoCliente;
         }
     }
 
@@ -33,23 +35,40 @@ class ListaCliente{
     EliminarCliente(id){
         if(this.inicio != null){
             let temp = this.inicio;
-            while(temp.siguiente != null){
+            while(temp != null){
                 if(temp.id == id){
-                    temp.anterior.siguiente = temp.siguiente;
-                    temp.siguiente.anterior = temp.anterior;
-                    temp.id = '';
-                    temp.nombre = ''
-                    temp.correo = '';
+                    if(temp.siguiente != null && temp.anterior != null){
+                        temp.anterior.siguiente = temp.siguiente;
+                        temp.siguiente.anterior = temp.anterior;
+                        temp.id = '';
+                        temp.nombre = ''
+                        temp.correo = '';
+                        return true;
+                    }else if(temp.siguiente == null && temp.anterior != null){
+                        temp.anterior.siguiente = null;
+                        return true
+                    }else if(temp.siguiente != null && temp.anterior == null){
+                        temp.siguiente.anterior = null;
+                        this.inicio = temp.siguiente;
+                        return true;
+                    }else{
+                        this.inicio = null;
+                        return true;
+                    }
                 }
                 temp = temp.siguiente;
             }
+            return false;
+        }else{
+            return false;
         }
+        
     }
 
     obtenerCliente(id){
         if(this.inicio != null){
             let temp = this.inicio;
-            while(temp.siguiente != null){
+            while(temp != null){
                 if(temp.id == id){
                     return temp;
                 }
@@ -60,6 +79,23 @@ class ListaCliente{
             return null;
         }
 
+    }
+
+    ModificarCliente(id,nombre,correo){
+        let cliente = this.obtenerCliente(id);
+        if(cliente != null){
+            if(nombre != ""){
+                cliente.nombre = nombre;
+            }
+            if(correo != ""){
+                cliente.correo = correo;
+            }
+            alert("Modificacion exitosa!");
+            return true;
+        }else{
+            alert("El cliente no existe");
+            return false;
+        }
     }
 
     Graficar(){
@@ -84,16 +120,12 @@ class ListaCliente{
     }
 
 
-    
+
 }
 
-let listaPrueba = new ListaCliente();
 
-listaPrueba.agregarCliente(0,"sebastian","sebas@gmail.com");
-listaPrueba.agregarCliente(1,"admin","admin@yahoo.com");
 
-let grafica = listaPrueba.Graficar();
 
-console.log(grafica)
+
 
 

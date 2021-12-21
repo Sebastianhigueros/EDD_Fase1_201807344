@@ -1,12 +1,12 @@
 
 
 class NodoMeses{
-    constructor(numeroMes,mes){
-        this.numeroMes = numeroMes;
+    constructor(mes){
+        this.numeroMes = 0;
         this.mes = mes
         this.siguiente = null;
         this.anterior = null;
-        //this.calendario = new Calendario();
+        this.calendario = new Calendario();
     }
 }
 
@@ -15,8 +15,9 @@ class ListaMeses{
         this.inicio = null;
     }
 
-    insertarMes(numeroMes,mes){
-        let nuevoMes = new NodoMeses(numeroMes,mes);
+    insertarMes(mes){
+        let nuevoMes = new NodoMeses(mes);
+        this.numeroDeMes(nuevoMes);
         if(this.inicio == null){
             this.inicio = nuevoMes;
         }else{
@@ -51,6 +52,35 @@ class ListaMeses{
         }
     }
 
+    numeroDeMes(nodoMes){
+        if(nodoMes.mes == 'enero'){
+            nodoMes.numeroMes = 1;
+        }else if(nodoMes.mes == 'febrero'){
+            nodoMes.numeroMes = 2;
+        }else if(nodoMes.mes == 'marzo'){
+            nodoMes.numeroMes = 3;
+        }else if(nodoMes.mes == 'abril'){
+            nodoMes.numeroMes = 4;
+        }else if(nodoMes.mes == 'mayo'){
+            nodoMes.numeroMes = 5;
+        }else if(nodoMes.mes == 'junio'){
+            nodoMes.numeroMes = 6;
+        }else if(nodoMes.mes == 'julio'){
+            nodoMes.numeroMes = 7;
+        }else if(nodoMes.mes == 'agosto'){
+            nodoMes.numeroMes = 8;
+        }else if(nodoMes.mes == 'septiembre'){
+            nodoMes.numeroMes = 9;
+        }else if(nodoMes.mes == 'octubre'){
+            nodoMes.numeroMes = 10;
+        }else if(nodoMes.mes == 'noviembre'){
+            nodoMes.numeroMes = 11;
+        }else if(nodoMes.mes == 'diciembre'){
+            nodoMes.numeroMes = 12;
+        }
+    }
+    
+
 
     tamanoLista(){
         let contador = 0;
@@ -65,6 +95,29 @@ class ListaMeses{
             }
             return contador;
         }
+    }
+
+    buscarMes(Mes){
+        let temp = this.inicio;
+        while(temp != null){
+            if(temp.mes == Mes){
+                return temp;
+            }
+            temp = temp.siguiente;
+
+        }
+        return null;
+    }
+
+    buscarMesPornumero(numeroMes){
+        let temp = this.inicio;
+        while(temp != null){
+            if(temp.numeroMes == numeroMes){
+                return temp;
+            }
+            temp = temp.siguiente
+        }
+        return null;
     }
 
     MostrarMeses(){
@@ -96,10 +149,4 @@ class ListaMeses{
     }
 }
 
-let meses = new ListaMeses()
-meses.insertarMes(12,'Diciembre');
-meses.insertarMes(2,'febrero');
 
-let graficaMeses = meses.graficarMeses();
-
-console.log(graficaMeses);

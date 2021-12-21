@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="CSS/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title></title>
+</head>
+<body>
+    <h1 class="h1 text-center">Carga Masiva</h1>
+    <nav style="background-color:  #1df00a;" class="navbar navbar-light">
+            <button class="dropbtn" onclick="cargarclientes()">Clientes</button>
+            <button class="dropbtn" onclick="cargarUsuarios()">vendedores</i></button>
+            <button class="dropbtn" onclick="cargarProveedores()">Proveedores</button>
+            <button class="dropbtn" onclick="cargarEventos()">Eventos</button>
+    </nav>
+    <div class="carga">
+        <form class="cargaform">
+            <div class="form-group">
+              <label for="exampleFormControlFile1">Example file input</label>
+              <input type="file" class="form-control-file" id="archivo">
+            </div>
+          </form>
+    </div>
+
+    <button onclick="regreso()" class="dropbtn fixed-bottom">Inicio</button>
+</body>
+<script src="./Javascript/circularJson.js" type="text/javascript"></script>
+<script src="./Javascript/calendario.js" type="text/javascript"></script>
+<script src="./Javascript/clientes.js"  type="text/javascript"></script>
+<script src="./Javascript/meses.js"  type="text/javascript"></script>
+<script src="./Javascript/Proveedores.js"  type="text/javascript"></script>
+<script src="./Javascript/usuarios.js"  type="text/javascript"></script>
+
+<script>
+    function showfile(){
+        let archivo = document.getElementById('archivo');
+
+        let lector = new FileReader();
+
+        lector.readAsText(archivo,'json');
+
+        lector.onload = event => {
+            var contenido = event.target.result;
+            
+        }
+
+        console.log(contenido);
+    }
+
+    function regreso(){
+        window.location.href = 'administrador.html';
+    }
+</script>
+</html>
