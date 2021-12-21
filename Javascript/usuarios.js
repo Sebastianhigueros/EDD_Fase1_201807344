@@ -244,16 +244,6 @@ class ArbolUsuarios{
 
 let Usuarios = new ArbolUsuarios();
 let proveedores = new ArbolProveedores();
-Usuarios.insertarRaiz("1",'sd',20,'sd@gmail.com','s');
-Usuarios.insertarRaiz('2','juan',22,'juan@gmail.com','sdf');
-let usuario = Usuarios.obtenerPrimerusuarioID(1);
-let cliente = usuario.clientes;
-cliente.agregarCliente(0,'juan','uncorreo@gmail.com');
-
-usuario.calendario.insertarMes('enero');
-
-let eventomes = usuario.calendario.buscarMes('enero');
-eventomes.calendario.agregarEvento('descanso',1,9);
 
 
 
@@ -756,5 +746,5 @@ async function cargarUsuarios(){
 function cerrarSesion(){
     sessionStorage.removeItem('usuario');
 
-    window.location.href = "index.html";
+    window.location.href = "login.html";
 }
