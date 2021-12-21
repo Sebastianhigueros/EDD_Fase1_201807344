@@ -752,3 +752,9 @@ async function cargarUsuarios(){
 
     localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listausuarios)));
 }
+
+function cerrarSesion(){
+    sessionStorage.removeItem('usuario');
+
+    window.location.href = "index.html";
+}
