@@ -25,8 +25,8 @@ class ArbolUsuarios{
             this.raiz = nuevoUsuario;
             return this.raiz
         }else{
-            return this.insertarNodo(this.raiz,nuevoUsuario);
-            
+            this.raiz = this.insertarNodo(this.raiz,nuevoUsuario);
+            return this.raiz
         }
         
 
@@ -53,15 +53,15 @@ class ArbolUsuarios{
                 if(this.alturaNodo(raiz.derecha) - this.alturaNodo(raiz.izquierda == -2)){
                         
                     if(usuario.id < raiz.izquierda.id){
-                         raiz = this.rotacionIzquierda(raiz);
+                        raiz = this.rotacionIzquierda(raiz);
                     }else{
                         raiz = this.rotacionI_D(raiz);
                     }
                 }
             }
+            raiz.altura = this.alturaMax(this.alturaNodo(raiz.izquierda),this.alturaNodo(raiz.derecha)) + 1;
+            return raiz
         }
-        raiz.altura = this.alturaMax(this.alturaNodo(raiz.izquierda),this.alturaNodo(raiz.derecha)) + 1;
-        return raiz
     }
 
 
@@ -70,8 +70,8 @@ class ArbolUsuarios{
         let temp = usuario.derecha;
         usuario.derecha = temp.izquierda
         temp.izquierda = usuario;
-        usuario = temp;
-        this.recalcularAltura(temp,usuario);
+        usuario = temp
+        this.recalcularAlturaDerecha(temp,usuario);
         return usuario;
 
     }
@@ -81,7 +81,7 @@ class ArbolUsuarios{
         usuario.izquierda = temp.derecha;
         temp.derecha = usuario;
         usuario = temp;
-        this.recalcularAltura(temp,usuario);
+        this.recalcularAlturaIzquierda(temp,usuario);
         return usuario;
     }
 
@@ -97,8 +97,13 @@ class ArbolUsuarios{
         return temp;
     }
 
-    recalcularAltura(temp,usuario){
-        temp.altura = this.alturaMax(this.alturaNodo(temp.izquierda),this.alturaNodo(temp.derecha))+1;
+    recalcularAlturaDerecha(temp,usuario){
+        temp.altura = this.alturaMax(usuario.altura.altura,this.alturaNodo(temp.derecha))+1;
+        usuario.altura = this.alturaMax(this.alturaNodo(usuario.izquierda),this.alturaNodo(usuario.derecha))+1;
+    }
+
+    recalcularAlturaIzquierda(temp,usuario){
+        temp.altura = this.alturaMax(usuario.altura.altura,this.altura(usuario.izquierda))+1;
         usuario.altura = this.alturaMax(this.alturaNodo(usuario.izquierda),this.alturaNodo(usuario.derecha))+1;
     }
 
@@ -244,8 +249,6 @@ class ArbolUsuarios{
 
 let Usuarios = new ArbolUsuarios();
 let proveedores = new ArbolProveedores();
-
-
 
 
 function inicioSesion(){
@@ -414,26 +417,27 @@ function obtenerDatos(){
 }
 
 function CrearUsuarios(){
-    let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem("usuarios")));
+    try{
+        let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem("usuarios")));
 
-    let nuevoUsuario = new ArbolUsuarios();
-    Object.assign(nuevoUsuario,usuarios);
+        let nuevoUsuario = new ArbolUsuarios();
+        Object.assign(nuevoUsuario,usuarios);
 
-    let id = document.getElementById('idusuario').value;
-    let nombre = document.getElementById('nombreusuario').value;
-    let edad = document.getElementById('edadusuario').value;
-    let correo = document.getElementById('correousuario').value;
-    let pass = document.getElementById('passusuario').value;
+        let id = document.getElementById('idusuario').value;
+        let nombre = document.getElementById('nombreusuario').value;
+        let edad = document.getElementById('edadusuario').value;
+        let correo = document.getElementById('correousuario').value;
+        let pass = document.getElementById('passusuario').value;
 
-    let nuevo = nuevoUsuario.insertarRaiz(id,nombre,edad,correo,pass);
+        let nuevo = nuevoUsuario.insertarRaiz(id,nombre,edad,correo,pass);
+        if(nuevo != null){
+            alert("usuario creado exitosamente");
+        }
 
-    if(nuevo != null){
-        alert("usuario creado exitosamente");
-    }else{
+        localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(nuevoUsuario)));
+    }catch{
         alert("ocurrio un error");
     }
-
-    localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(nuevoUsuario)));
 }
 
 function CrearProveedores(){
@@ -473,7 +477,7 @@ function GraficarCliente(){
         Object.assign(listausuario,clientes)
 
         let textoDot = listausuario.Graficar();
-
+        document.getElementById("dot").value = textoDot;
         let parseado = vis.parseDOTNetwork(textoDot);
 
         var container = document.getElementById("graficas");
@@ -509,6 +513,7 @@ function GraficarCalendario(){
             let calendario = new Calendario()
             Object.assign(calendario,eventos);
             let textoDot = calendario.graficarCalendario();
+            document.getElementById("dot").value = textoDot;
             let parseado = vis.parseDOTNetwork(textoDot)
 
             var container = document.getElementById("graficas");
@@ -531,7 +536,7 @@ function GraficarUsuarios(){
     Object.assign(listaUsuario,usuarios);
 
     var textoDot = listaUsuario.graficarArbol();
-
+    document.getElementById("dot").value = textoDot;
     var datosparseados = vis.parseDOTNetwork(textoDot);
 
     var container = document.getElementById("graficas");
@@ -554,7 +559,7 @@ function GraficarProveedores(){
     Object.assign(listaProveedores,listaProv);
 
     var textoDot = listaProveedores.graficarArbol();
-
+    document.getElementById("dot").value = textoDot;
     var datosparseados = vis.parseDOTNetwork(textoDot);
 
     var container = document.getElementById("graficas");
@@ -583,6 +588,7 @@ function graficaCalendario(){
         let listaeventos = new Calendario();
         Object.assign(listaeventos,eventos);
         let textoDot = listaeventos.graficarCalendario();
+        document.getElementById("dot").value = textoDot;
         let datosparseados = vis.parseDOTNetwork(textoDot);
 
         var container = document.getElementById("graficas");
@@ -621,9 +627,12 @@ async function cargarclientes(){
             tempclientes.agregarCliente(listaagregar[j].id,listaagregar[j].nombre,listaagregar[j].correo);
         }
 
+        usuario.clientes = tempclientes;
+
     }
 
     localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listaus)));
+    alert("clientes agregados");
 
 }
 
@@ -649,7 +658,7 @@ async function cargarEventos(){
         let tamagregar = Object.keys(listaagregar).length;
         for(var j = 0;j < tamagregar;j++){
             let mes = listaagregar[j].mes;
-            let nombremes
+            let nombremes = '';
             if(mes == 1){
                 nombremes = 'enero'
             }else if(mes ==2){
@@ -682,6 +691,7 @@ async function cargarEventos(){
                 Object.assign(tempev,listaeventos);
 
                 tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
+                mesbuscado.calendario = tempev;
             }else{
                 tempCal.insertarMes(nombremes);
                 mesbuscado = tempCal.buscarMes(nombremes);
@@ -689,12 +699,11 @@ async function cargarEventos(){
                 let tempev = new Calendario();
                 Object.assign(tempev,listaeventos);
                 tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
+                mesbuscado.calendario = tempev;
             }
-            
-
+            usuario.calendario = tempCal;
         }
     }
-
 
     localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listaus)));
 }
@@ -716,31 +725,38 @@ async function cargarProveedores(){
     }
 
     localStorage.setItem('proveedores',JSON.stringify(CircularJSON.stringify(listaProv)));
+    alert("Proveedores agregados");
+
 }
 
 async function cargarUsuarios(){
-    let archivo = document.getElementById('archivo').files[0];
-    let texto = await archivo.text();
-    let usu = JSON.parse(texto);
-    let tamano = Object.keys(usu.vendedores).length;
+    try{
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let usu = JSON.parse(texto);
+        let tamano = Object.keys(usu.vendedores).length;
 
-    let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
+        let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
 
-    let listausuarios = new ArbolUsuarios();
-    Object.assign(listausuarios,usuarios);
+        let listausuarios = new ArbolUsuarios();
+        Object.assign(listausuarios,usuarios);
 
-    for(var i = 0;i < tamano;i++){
-        let id = usu.vendedores[i].id;
-        let nombre = usu.vendedores[i].nombre;
-        let edad = usu.vendedores[i].edad;
-        let correo = usu.vendedores[i].correo;
-        let pass = usu.vendedores[i].password;
+        for(var i = 0;i < tamano;i++){
+            let id = usu.vendedores[i].id;
+            let nombre = usu.vendedores[i].nombre;
+            let edad = usu.vendedores[i].edad;
+            let correo = usu.vendedores[i].correo;
+            let pass = usu.vendedores[i].password;
 
-        listausuarios.insertarRaiz(id,nombre,edad,correo,pass);
+            listausuarios.insertarRaiz(id,nombre,edad,correo,pass);
+        }
+
+
+        localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listausuarios)));
+        alert("Vendedores agregados");
+    }catch{
+        alert("ocurrio un error");
     }
-
-
-    localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listausuarios)));
 }
 
 function cerrarSesion(){
