@@ -251,25 +251,30 @@ let Usuarios = new ArbolUsuarios();
 let proveedores = new ArbolProveedores();
 
 
+
 function inicioSesion(){
 
 
     var usu = document.getElementById("usuario").value;
     var pas = document.getElementById("pass").value;
 
-    let arboltemp = CircularJSON.stringify(Usuarios);
-
-    let listaUsuarios = JSON.stringify(arboltemp);
-
-    localStorage.setItem("usuarios",listaUsuarios);
 
     if(usu === "admin" && pas == 1234){
         sessionStorage.setItem('usuario','admin');
         let provtemp = JSON.stringify(CircularJSON.stringify(proveedores));
         localStorage.setItem('proveedores',provtemp);
+        let arboltemp = CircularJSON.stringify(Usuarios);
+
+        let listaUsuarios = JSON.stringify(arboltemp);
+    
+        localStorage.setItem("usuarios",listaUsuarios);
         window.location.href ="administrador.html";
+
     }else{
-        let usuario = Usuarios.buscarPrimerusuario(usu,pas);
+        let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
+        let tempus = new ArbolUsuarios();
+        Object.assign(tempus,usuarios);
+        let usuario = tempus.buscarPrimerusuario(usu,pas);
         if(usuario != null){
             sessionStorage.setItem('usuario',usuario.id);
 
@@ -701,7 +706,7 @@ async function cargarEventos(){
                 tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
                 mesbuscado.calendario = tempev;
             }
-            usuario.calendario = tempCal;
+            usuario.calendario = tempCal; 
         }
     }
 
