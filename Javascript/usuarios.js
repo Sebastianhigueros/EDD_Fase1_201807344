@@ -23,10 +23,8 @@ class ArbolUsuarios{
 
         if(this.raiz == null){
             this.raiz = nuevoUsuario;
-            return this.raiz
         }else{
             this.raiz = this.insertarNodo(this.raiz,nuevoUsuario);
-            return this.raiz
         }
         
 
@@ -70,9 +68,8 @@ class ArbolUsuarios{
         let temp = usuario.derecha;
         usuario.derecha = temp.izquierda
         temp.izquierda = usuario;
-        usuario = temp
         this.recalcularAlturaDerecha(temp,usuario);
-        return usuario;
+        return temp;
 
     }
 
@@ -80,9 +77,8 @@ class ArbolUsuarios{
         let temp = usuario.izquierda;
         usuario.izquierda = temp.derecha;
         temp.derecha = usuario;
-        usuario = temp;
         this.recalcularAlturaIzquierda(temp,usuario);
-        return usuario;
+        return temp;
     }
 
     rotacionD_I(usuario){
@@ -153,6 +149,38 @@ class ArbolUsuarios{
             }
         
     }
+
+    buscarPrimerusuarioNombre(nombre){
+        if(this.raiz != null){
+            if(this.raiz.nombre == nombre){
+                return this.raiz;
+            }else{
+                return this.buscarUsuario(this.raiz,nombre);
+            }
+        }else{
+            return null;
+        }
+    }
+
+    buscarUsuarioNombre(raizActual,nombre){
+            if(raizActual != null){
+                if(raizActual.nombre == nombre){
+                    return raizActual;
+                }
+
+                let izquierda = this.buscarUsuario(raizActual.izquierda,nombre);
+                let derecha = this.buscarUsuario(raizActual.derecha,nombre);
+                if(izquierda == null){
+                    return derecha
+                }else if(derecha == null){
+                    return izquierda
+                }else{
+                    return null;
+                }
+            }
+        
+    }
+
 
     obtenerPrimerusuarioID(id){
         if(this.raiz.id == id){
@@ -247,13 +275,27 @@ class ArbolUsuarios{
 
 }
 
-let Usuarios = new ArbolUsuarios();
-let proveedores = new ArbolProveedores();
 
 
+
+function crearMemoria(){   
+    let inventario = new ArbolInventario();
+    let Usuarios = new ArbolUsuarios();
+    let proveedores = new ArbolProveedores();
+    let provtemp = JSON.stringify(CircularJSON.stringify(proveedores));
+    localStorage.setItem('proveedores',provtemp);
+    let arboltemp = CircularJSON.stringify(Usuarios);
+
+    let listaUsuarios = JSON.stringify(arboltemp);
+
+    localStorage.setItem("usuarios",listaUsuarios);
+
+    let inventariotemp = JSON.stringify(CircularJSON.stringify(inventario));
+    localStorage.setItem("inventario",inventariotemp);
+}
 
 function inicioSesion(){
-
+    document.cookie
 
     var usu = document.getElementById("usuario").value;
     var pas = document.getElementById("pass").value;
@@ -261,14 +303,45 @@ function inicioSesion(){
 
     if(usu === "admin" && pas == 1234){
         sessionStorage.setItem('usuario','admin');
-        let provtemp = JSON.stringify(CircularJSON.stringify(proveedores));
-        localStorage.setItem('proveedores',provtemp);
-        let arboltemp = CircularJSON.stringify(Usuarios);
-
-        let listaUsuarios = JSON.stringify(arboltemp);
+        let Usuarios = new ArbolUsuarios();
+        let proveedores = new ArbolProveedores();
+        let rutas = new grafoRutas();
+        let inventario = new ArbolInventario()
+        let ventas = new TablaVentas();
+        let ventasencript = new cadena();
+        var provtemp = CircularJSON.stringify(proveedores);
+        var provtemp2 = JSON.stringify(provtemp);
+        localStorage.setItem('proveedores',provtemp2);
+        var arboltemp = CircularJSON.stringify(Usuarios);
+    
+        var listaUsuarios = JSON.stringify(arboltemp);
     
         localStorage.setItem("usuarios",listaUsuarios);
+
+        
+        var rutatemp = CircularJSON.stringify(rutas);
+        var rutatemp2 = JSON.stringify(rutatemp)
+        localStorage.setItem("rutas",rutatemp2)
+    
+        var inventariotemp = CircularJSON.stringify(inventario);
+        var inventariotemp2 = JSON.stringify(inventariotemp);
+        localStorage.setItem("inventario",inventariotemp2);
+
+        var ventastemp = CircularJSON.stringify(ventas);
+        var ventastemp2 = JSON.stringify(ventastemp);
+        localStorage.setItem("ventas",ventastemp2);
+
+        var encript = CircularJSON.stringify(ventasencript);
+        var encript2 = JSON.stringify(encript);
+
+        localStorage.setItem("ventasEncript",encript2);
+
+        
+
         window.location.href ="administrador.html";
+
+
+
 
     }else{
         let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
@@ -277,6 +350,7 @@ function inicioSesion(){
         let usuario = tempus.buscarPrimerusuario(usu,pas);
         if(usuario != null){
             sessionStorage.setItem('usuario',usuario.id);
+            sessionStorage.setItem('username',usuario.nombre);
 
 
             let listaTemp = usuario.clientes;
@@ -307,6 +381,11 @@ function obtenerUsuarios(){
     let proveedores = new ArbolProveedores();
     Object.assign(proveedores,provetemp);
 
+    let inventtemp = JSON.parse(CircularJSON.parse(localStorage.getItem('inventario')));
+    let inventario = new ArbolInventario();
+    Object.assign(inventario,inventtemp);
+
+
 
 }
 
@@ -323,12 +402,20 @@ function creaEvento(){
 
     let mesbuscado = listameses.buscarMes(mes);
     if(mesbuscado != null){
-        mesbuscado.agregarEvento(evento,dia,hora);
+        let eventos = mesbuscado.calendario;
+        let calendario = new Calendario();
+        Object.assign(calendario,eventos);
+        calendario.agregarEvento(evento,dia,hora)
+        mesbuscado.calendario = calendario;
         alert("evento creado")
     }else{
         listameses.insertarMes(mes);
         let mesbuscado = listameses.buscarMes(mes);
-        mesbuscado.calendario.agregarEvento(evento,dia,hora);
+        let eventos = mesbuscado.calendario;
+        let calendario = new Calendario();
+        Object.assign(calendario,eventos);
+        calendario.agregarEvento(evento,dia,hora);
+        mesbuscado.calendario = calendario;
         alert("evento creado");
     }
 
@@ -434,14 +521,39 @@ function CrearUsuarios(){
         let correo = document.getElementById('correousuario').value;
         let pass = document.getElementById('passusuario').value;
 
-        let nuevo = nuevoUsuario.insertarRaiz(id,nombre,edad,correo,pass);
-        if(nuevo != null){
-            alert("usuario creado exitosamente");
-        }
+        nuevoUsuario.insertarRaiz(id,nombre,edad,correo,pass);
 
         localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(nuevoUsuario)));
     }catch{
         alert("ocurrio un error");
+    }
+}
+
+function CrearItemInventario(){
+    try{
+        var inventario = JSON.parse(CircularJSON.parse(localStorage.getItem("inventario")));
+        var nuevoInventario = new ArbolInventario();
+        Object.assign(nuevoInventario,inventario);
+        console.log(nuevoInventario);
+        let id = document.getElementById("idprod").value;
+        let nombre = document.getElementById("nombreprod").value;
+        let precio = document.getElementById("precioprod").value;
+        let cantidad = document.getElementById("cantidadprod").value;
+        let raizprueba = new NodoArbol()
+        Object.assign(raizprueba,nuevoInventario.raiz);
+
+        nuevoInventario.raiz = raizprueba;
+        console.log(nuevoInventario.raiz);
+        nuevoInventario.agregarItem(id,nombre,precio,cantidad);
+
+        var temp = CircularJSON.stringify(nuevoInventario);
+        var temp2 = JSON.stringify(temp);
+        console.log(nuevoInventario.raiz);
+        console.log(temp2);
+        localStorage.setItem("inventario",JSON.stringify(CircularJSON.stringify(nuevoInventario)));
+        alert("Producto agregado")
+    }catch (error){
+        alert("Ocurrio un error: "+error);
     }
 }
 
@@ -609,128 +721,141 @@ function graficaCalendario(){
 }
 
 async function cargarclientes(){
-    let archivo = document.getElementById('archivo').files[0];
-    let texto = await archivo.text();
-    let clientes = JSON.parse(texto);
-    let tamano = Object.keys(clientes.vendedores).length;
+    try{
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let clientes = JSON.parse(texto);
+        let tamano = Object.keys(clientes.vendedores).length;
 
-    let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
+        let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
 
-    let listaus = new ArbolUsuarios();
+        let listaus = new ArbolUsuarios();
 
-    Object.assign(listaus,usuarios);
+        Object.assign(listaus,usuarios);
 
-    for(var i = 0;i < tamano;i++){
-        let idus = clientes.vendedores[i].id;
-        let usuario = listaus.obtenerPrimerusuarioID(idus);
-        let listaclientes = usuario.clientes;
-        let tempclientes = new ListaCliente();
-        Object.assign(tempclientes,listaclientes);
-        let listaagregar = clientes.vendedores[i].clientes;
-        let tamagregar = Object.keys(listaagregar).length;
-        for(var j = 0; j < tamagregar;j++){
-            tempclientes.agregarCliente(listaagregar[j].id,listaagregar[j].nombre,listaagregar[j].correo);
+        for(var i = 0;i < tamano;i++){
+            let idus = clientes.vendedores[i].id;
+            let usuario = listaus.obtenerPrimerusuarioID(idus);
+            let listaclientes = usuario.clientes;
+            let tempclientes = new ListaCliente();
+            Object.assign(tempclientes,listaclientes);
+            let listaagregar = clientes.vendedores[i].clientes;
+            let tamagregar = Object.keys(listaagregar).length;
+            for(var j = 0; j < tamagregar;j++){
+                tempclientes.agregarCliente(listaagregar[j].id,listaagregar[j].nombre,listaagregar[j].correo);
+            }
+
+            usuario.clientes = tempclientes;
+
         }
 
-        usuario.clientes = tempclientes;
-
+        localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listaus)));
+        alert("clientes agregados");
+    }catch{
+        alert("ocurrio un error");
     }
-
-    localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listaus)));
-    alert("clientes agregados");
 
 }
 
 async function cargarEventos(){
-    let archivo = document.getElementById('archivo').files[0];
-    let texto = await archivo.text();
-    let eventos = JSON.parse(texto);
-    let tamano = Object.keys(eventos.vendedores).length;
+    try{
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let eventos = JSON.parse(texto);
+        let tamano = Object.keys(eventos.vendedores).length;
 
-    let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
+        let usuarios = JSON.parse(CircularJSON.parse(localStorage.getItem('usuarios')));
 
-    let listaus = new ArbolUsuarios();
+        let listaus = new ArbolUsuarios();
 
-    Object.assign(listaus,usuarios);
+        Object.assign(listaus,usuarios);
 
-    for(var i = 0;i < tamano;i++){
-        let idus = eventos.vendedores[i].id;
-        let usuario = listaus.obtenerPrimerusuarioID(idus);
-        let calendario = usuario.calendario;
-        let tempCal = new ListaMeses();
-        Object.assign(tempCal,calendario);
-        let listaagregar = eventos.vendedores[i].eventos;
-        let tamagregar = Object.keys(listaagregar).length;
-        for(var j = 0;j < tamagregar;j++){
-            let mes = listaagregar[j].mes;
-            let nombremes = '';
-            if(mes == 1){
-                nombremes = 'enero'
-            }else if(mes ==2){
-                nombremes = 'febrero'
-            }else if(mes ==3){
-                nombremes = 'marzo'
-            }else if(mes ==4){
-                nombremes = 'abril'
-            }else if(mes ==5){
-                nombremes = 'mayo'
-            }else if(mes ==6){
-                nombremes = 'junio'
-            }else if(mes ==7){
-                nombremes = 'julio'
-            }else if(mes ==8){
-                nombremes = 'agosto'
-            }else if(mes ==9){
-                nombremes = 'septiembre'
-            }else if(mes ==10){
-                nombremes = 'octubre'
-            }else if(mes ==11){
-                nombremes = 'noviembre'
-            }else if(mes ==12){
-                nombremes = 'diciembre'
+        for(var i = 0;i < tamano;i++){
+            let idus = eventos.vendedores[i].id;
+            let usuario = listaus.obtenerPrimerusuarioID(idus);
+            let calendario = usuario.calendario;
+            let tempCal = new ListaMeses();
+            Object.assign(tempCal,calendario);
+            let listaagregar = eventos.vendedores[i].eventos;
+            let tamagregar = Object.keys(listaagregar).length;
+            for(var j = 0;j < tamagregar;j++){
+                let mes = listaagregar[j].mes;
+                let nombremes = '';
+                if(mes == 1){
+                    nombremes = 'enero'
+                }else if(mes ==2){
+                    nombremes = 'febrero'
+                }else if(mes ==3){
+                    nombremes = 'marzo'
+                }else if(mes ==4){
+                    nombremes = 'abril'
+                }else if(mes ==5){
+                    nombremes = 'mayo'
+                }else if(mes ==6){
+                    nombremes = 'junio'
+                }else if(mes ==7){
+                    nombremes = 'julio'
+                }else if(mes ==8){
+                    nombremes = 'agosto'
+                }else if(mes ==9){
+                    nombremes = 'septiembre'
+                }else if(mes ==10){
+                    nombremes = 'octubre'
+                }else if(mes ==11){
+                    nombremes = 'noviembre'
+                }else if(mes ==12){
+                    nombremes = 'diciembre'
+                }
+                let mesbuscado = tempCal.buscarMes(nombremes);
+                if(mesbuscado != null){
+                    let listaeventos = mesbuscado.calendario;
+                    let tempev = new Calendario();
+                    Object.assign(tempev,listaeventos);
+
+                    tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
+                    mesbuscado.calendario = tempev;
+                }else{
+                    tempCal.insertarMes(nombremes);
+                    mesbuscado = tempCal.buscarMes(nombremes);
+                    let listaeventos = mesbuscado.calendario;
+                    let tempev = new Calendario();
+                    Object.assign(tempev,listaeventos);
+                    tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
+                    mesbuscado.calendario = tempev;
+                }
+                usuario.calendario = tempCal; 
             }
-            let mesbuscado = tempCal.buscarMes(nombremes);
-            if(mesbuscado != null){
-                let listaeventos = mesbuscado.calendario;
-                let tempev = new Calendario();
-                Object.assign(tempev,listaeventos);
-
-                tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
-                mesbuscado.calendario = tempev;
-            }else{
-                tempCal.insertarMes(nombremes);
-                mesbuscado = tempCal.buscarMes(nombremes);
-                let listaeventos = mesbuscado.calendario;
-                let tempev = new Calendario();
-                Object.assign(tempev,listaeventos);
-                tempev.agregarEvento(listaagregar[j].desc,listaagregar[j].dia,listaagregar[i].hora);
-                mesbuscado.calendario = tempev;
-            }
-            usuario.calendario = tempCal; 
         }
-    }
 
-    localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listaus)));
+        localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listaus)));
+        alert("eventos cargados")
+    }catch{
+        alert("ocurrio un error")
+    }
 }
 
 async function cargarProveedores(){
-    let archivo = document.getElementById('archivo').files[0];
-    let texto = await archivo.text();
-    let prov = JSON.parse(texto);
-    let tamano = Object.keys(prov.proveedores).length;
+    try{
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let prov = JSON.parse(texto);
+        let tamano = Object.keys(prov.proveedores).length;
 
-    let proveedores = JSON.parse(CircularJSON.parse(localStorage.getItem('proveedores')));
+        let proveedores = JSON.parse(CircularJSON.parse(localStorage.getItem('proveedores')));
 
-    let listaProv = new ArbolProveedores();
+        let listaProv = new ArbolProveedores();
 
-    Object.assign(listaProv,proveedores);
+        Object.assign(listaProv,proveedores);
 
-    for(var i = 0;i < tamano;i++){
-        listaProv.agregarPrimerProveedor(prov.proveedores[i].id,prov.proveedores[i].nombre,prov.proveedores[i].direccion,prov.proveedores[i].telefono,prov.proveedores[i].correo);
+        for(var i = 0;i < tamano;i++){
+            listaProv.agregarPrimerProveedor(prov.proveedores[i].id,prov.proveedores[i].nombre,prov.proveedores[i].direccion,prov.proveedores[i].telefono,prov.proveedores[i].correo);
+        }
+
+        localStorage.setItem('proveedores',JSON.stringify(CircularJSON.stringify(listaProv)));
+        alert("Proveedores agregados");
+    }catch{
+        alert("Ocurrio un error")
     }
-
-    localStorage.setItem('proveedores',JSON.stringify(CircularJSON.stringify(listaProv)));
-    alert("Proveedores agregados");
 
 }
 
@@ -759,13 +884,411 @@ async function cargarUsuarios(){
 
         localStorage.setItem('usuarios',JSON.stringify(CircularJSON.stringify(listausuarios)));
         alert("Vendedores agregados");
-    }catch{
-        alert("ocurrio un error");
+    }catch(error){
+        alert("ocurrio un error: "+error);
+    }
+}
+
+async function cargarInventario(){
+    try{
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let nuevoinvent = JSON.parse(texto);
+        let tamano = Object.keys(nuevoinvent.productos).length;
+
+        var invent = JSON.parse(CircularJSON.parse(localStorage.getItem("inventario")));
+        var inventtemp = new ArbolInventario();
+        Object.assign(inventtemp,invent);
+        console.log(inventtemp.raiz)
+
+        for(var i= 0; i < tamano;i++){
+            let id = nuevoinvent.productos[i].id;
+            let nombre = nuevoinvent.productos[i].nombre;
+            let precio = nuevoinvent.productos[i].precio;
+            let cantidad = nuevoinvent.productos[i].cantidad;
+
+            inventtemp.agregarItem(id,nombre,precio,cantidad);
+        }
+
+        console.log(inventtemp.raiz);
+
+        var temporal = CircularJSON.stringify(inventtemp);
+        var temporal2 = JSON.stringify(temporal);
+        console.log(temporal2);
+        localStorage.setItem("inventario",JSON.stringify(CircularJSON.stringify(inventtemp)));
+        alert("Productos agregados");
+
+    }catch(error){
+        alert("Ocurrio un error: " +error);
+    }
+}
+
+
+
+async function cargarRutas(){
+    try{
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let nuevasrutas = JSON.parse(texto);
+        let tamano = Object.keys(nuevasrutas.rutas).length;
+        let ruta = JSON.parse(localStorage.getItem('rutas'));
+        ruta = CircularJSON.parse(ruta);
+        let rutatemp = new grafoRutas();
+        Object.assign(rutatemp,ruta);
+
+        for(var i = 0;i < tamano; i++){
+            let id = nuevasrutas.rutas[i].id;
+            let nombre = nuevasrutas.rutas[i].nombre;
+            let listaad = nuevasrutas.rutas[i].adyacentes
+            let tamadyacentes = Object.keys(listaad).length;
+            rutatemp.agregarNodo(id,nombre);
+            for(var j = 0; j < tamadyacentes;j++){
+                let idad = listaad[j].id;
+                let nombread = listaad[j].nombre;
+                let pondad = listaad[j].distancia;
+                rutatemp.agregaradyacentes(id,idad,nombread,pondad);
+            }
+        }
+        localStorage.setItem('rutas',JSON.stringify(CircularJSON.stringify(rutatemp)));
+        alert("Rutas agregadas");
+
+    }catch(error){
+        alert(error);
+    }
+}
+
+async function cargarVentas(){
+    try {
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let nuevasventas = JSON.parse(texto);
+        let tamano = Object.keys(nuevasventas.ventas).length;
+
+        let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+        ventatemp = CircularJSON.parse(ventatemp);
+        let ventasnuevas = new TablaVentas();
+        Object.assign(ventasnuevas,ventatemp);
+
+        let inventtemp = JSON.parse(localStorage.getItem("inventario"));
+        inventtemp = CircularJSON.parse(inventtemp);
+        let inventariobusqueda = new ArbolInventario();
+        Object.assign(inventariobusqueda,inventtemp);
+
+        let raizparseada = new NodoArbol();
+        Object.assign(raizparseada,inventariobusqueda.raiz);
+
+        
+
+        for(var i = 0; i < tamano; i++){
+            let idVenta = nuevasventas.ventas[i].id;
+            let usuario = nuevasventas.ventas[i].vendedor;
+            let cliente = nuevasventas.ventas[i].cliente;
+            ventasnuevas.agregarVenta(idVenta,usuario,cliente);
+            let prodtemp = ventasnuevas.tabla[idVenta].productos;
+            let prodtemp2 = new ListaProductos();
+            Object.assign(prodtemp2,prodtemp);
+            let productos = nuevasventas.ventas[i].productos;
+            let tamanoproductos =  Object.keys(productos).length;
+            for(var j = 0; j < tamanoproductos;j++){
+                let idprod = productos[j].id;
+                let obtenido =inventariobusqueda.busqueda(raizparseada,idprod);
+                let nombreprod = obtenido.nombre;
+                let precioprod = obtenido.precio;
+                let cantidadprod = productos[j].cantidad;
+                if(obtenido.cantidad > cantidadprod){
+                    obtenido.cantidad = obtenido.cantidad-cantidadprod;
+                    prodtemp2.agregarProducto(idprod,nombreprod,cantidadprod,precioprod);
+                }else{
+                    alert("stock insuficiente para: "+nombreprod);
+                }
+                
+                
+            }
+            let total = prodtemp2.calcularTotal();
+            ventasnuevas.tabla[idVenta].productos = prodtemp2;
+            ventasnuevas.tabla[idVenta].total = total; 
+        }
+        localStorage.setItem("ventas",JSON.stringify(CircularJSON.stringify(ventasnuevas)));
+        localStorage.setItem("inventario",JSON.stringify(CircularJSON.stringify(inventariobusqueda)));
+        alert("ventas cargadas exitosamente");
+    }catch(error){
+        console.log("ocurrio un error:" +error);
+    }
+}
+
+async function cargarVentas2(){
+    try {
+        let archivo = document.getElementById('archivo').files[0];
+        let texto = await archivo.text();
+        let nuevasventas = JSON.parse(texto);
+        let tamano = Object.keys(nuevasventas.ventas).length;
+
+        let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+        ventatemp = CircularJSON.parse(ventatemp);
+        let ventasnuevas = new TablaVentas();
+        Object.assign(ventasnuevas,ventatemp);
+        
+
+        for(var i = 0; i < tamano; i++){
+            let idVenta = nuevasventas.ventas[i].id;
+            let usuario = nuevasventas.ventas[i].vendedor;
+            let cliente = nuevasventas.ventas[i].cliente;
+            ventasnuevas.agregarVenta(idVenta,usuario,cliente);
+            let prodtemp = ventasnuevas.tabla[idVenta].productos;
+            let prodtemp2 = new ListaProductos();
+            Object.assign(prodtemp2,prodtemp);
+            let productos = nuevasventas.ventas[i].productos;
+            let tamanoproductos =  Object.keys(productos).length;
+            for(var j = 0; j < tamanoproductos;j++){
+                let idprod = productos[j].id;
+                let nombreprod = productos[j].nombre;
+                let precioprod = productos[j].precio;
+                let cantidadprod = productos[j].cantidad;
+                prodtemp2.agregarProducto(idprod,nombreprod,cantidadprod,precioprod); 
+            }
+            let total = prodtemp2.calcularTotal();
+            ventasnuevas.tabla[idVenta].productos = prodtemp2;
+            ventasnuevas.tabla[idVenta].total = total; 
+        }
+        localStorage.setItem("ventas",JSON.stringify(CircularJSON.stringify(ventasnuevas)));
+        alert("ventas cargadas exitosamente");
+    }catch(error){
+        console.log("ocurrio un error:" +error);
+    }
+}
+
+function crearVenta(){
+    try{
+        let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+        ventatemp = CircularJSON.parse(ventatemp);
+        let ventasnuevas = new TablaVentas();
+        Object.assign(ventasnuevas,ventatemp);
+
+        let idventa = document.getElementById("idVenta").value;
+        let cliente = document.getElementById("nombreCliente").value;
+        let usuario = sessionStorage.getItem("username");
+
+        ventasnuevas.agregarVenta(idventa,cliente,usuario);
+
+        localStorage.setItem("ventas",JSON.stringify(CircularJSON.stringify(ventasnuevas)));
+    }catch(error){
+        console.log("ocurrio un error: "+error);
+    }
+}
+
+function agregarProductos(){
+    try {
+        let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+        ventatemp = CircularJSON.parse(ventatemp);
+        let ventasnuevas = new TablaVentas();
+        Object.assign(ventasnuevas,ventatemp);
+
+        let idventa = document.getElementById("idVenta").value;
+        let usuario = sessionStorage.getItem("username");
+        let idprod = document.getElementById("idprod").value;
+        let cantidad = document.getElementById("cantidadprod").value;
+        for(var i = 0; i < ventasnuevas.tamano;i++){
+            if(ventasnuevas.tabla[i].id == idventa && ventasnuevas.tabla[i].vendedor == usuario){
+                let prods = ventasnuevas.tabla[i].productos
+                let prodtemp = new ListaProductos()
+                Object.assign(prodtemp,prods);
+            }
+        }
+
+        let inventtemp = JSON.parse(localStorage.getItem("inventario"));
+        inventtemp = CircularJSON.parse(inventtemp);
+        let inventariobusqueda = new ArbolInventario();
+        Object.assign(inventariobusqueda,inventtemp);
+
+        let raizparseada = new NodoArbol();
+        Object.assign(raizparseada,inventariobusqueda.raiz);
+        let obtenido =inventariobusqueda.busqueda(raizparseada,idprod);
+        let nombreprod = obtenido.nombre;
+        let precioprod = obtenido.precio;  
+        if(obtenido.cantidad > cantidad){
+            obtenido.cantidad = obtenido.cantidad-cantidadprod;
+            prodtemp.agregarProducto(idprod,nombreprod,cantidad,precioprod);
+        }else{
+            alert("stock insuficiente para: "+nombreprod);
+        }      
+        
+        localStorage.setItem("ventas",JSON.stringify(CircularJSON.stringify(ventasnuevas)));
+        localStorage.setItem("inventario",JSON.stringify(CircularJSON.stringify(inventariobusqueda)));
+    } catch (error) {
+        console.log("Ocurrio un error: "+error);
+    }
+}
+function graficarVentas(){
+    try {
+        let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+        ventatemp = CircularJSON.parse(ventatemp);
+        let grafventas = new TablaVentas();
+        Object.assign(grafventas,ventatemp);
+        
+        let textoDot = grafventas.graficar();
+        document.getElementById("dot").value = textoDot;
+        var datosparseados = vis.parseDOTNetwork(textoDot);
+
+        var container = document.getElementById("graficas");
+        var data = {
+            nodes: datosparseados.nodes,
+            edges: datosparseados.edges
+        }
+        var options ={};
+
+        var network = new vis.Network(container,data,options);
+
+    } catch (error) {
+        alert("Ocurrio un error:" + error);
+    }
+}
+
+
+
+function graficarRutas(){
+    let ruta = JSON.parse(localStorage.getItem('rutas'));
+    ruta = CircularJSON.parse(ruta);
+    let rutatemp = new grafoRutas();
+    Object.assign(rutatemp,ruta);
+
+    let textoDot = rutatemp.graficarGrafo();
+
+    document.getElementById("dot").value = textoDot;
+    var datosparseados = vis.parseDOTNetwork(textoDot);
+
+    var container = document.getElementById("graficas");
+    var data = {
+        nodes: datosparseados.nodes,
+        edges: datosparseados.edges
+    }
+    var options ={};
+
+    var network = new vis.Network(container,data,options);
+
+}
+
+
+
+function graficarInventario(){
+    let textoDot = ""
+    let inventtemp = new ArbolInventario();
+    let invent = JSON.parse(localStorage.getItem("inventario"));
+    invent = CircularJSON.parse(invent);
+    Object.assign(inventtemp,invent);
+
+    textoDot += "digraph ruta{\n";
+    textoDot += "\trankr=TB;\n";
+    textoDot += "\tnode[shape= box]\n";
+    textoDot += inventtemp.graficaNodos(inventtemp.raiz);
+    textoDot += inventtemp.graficaEnlace(inventtemp.raiz);
+    textoDot += "}"
+
+    document.getElementById("dot").value = textoDot;
+    var datosparseados = vis.parseDOTNetwork(textoDot);
+
+    var container = document.getElementById("graficas");
+    var data = {
+        nodes: datosparseados.nodes,
+        edges: datosparseados.edges
+    }
+    var options ={};
+
+    var network = new vis.Network(container,data,options);
+}
+
+function encriptarVentas(){
+    try {
+        let texto = []
+        let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+        ventatemp = CircularJSON.parse(ventatemp);
+        let encventas = new TablaVentas();
+        Object.assign(encventas,ventatemp);
+        for(var i = 0; i <encventas.tamano;i++){
+            if(encventas.tabla[i] != null){
+                texto.push({
+                    "id": encventas.tabla[i].id,
+                    "vendedor": encventas.tabla[i].vendedor,
+                    "cliente":encventas.tabla[i].cliente,
+                    "total": encventas.tabla[i].total
+                })
+            }
+        }
+        let encripttemp = JSON.parse(localStorage.getItem("ventasEncript"));
+        let encripttemp2 = CircularJSON.parse(encripttemp);
+        let bloqueventas = new cadena();
+
+        Object.assign(bloqueventas,encripttemp2);
+        for(let venta of texto){
+            bloqueventas.agregarBloque(venta);
+        }
+
+
+        
+        localStorage.setItem("ventasEncript",JSON.stringify(CircularJSON.stringify(bloqueventas)));
+        alert("ventas Encriptadas");
+    } catch (error) {
+        alert(error);
+    }
+
+}
+
+function graficarVentasEncript(){
+    try{
+        let encripttemp = JSON.parse(localStorage.getItem("ventasEncript"));
+        let encripttemp2 = CircularJSON.parse(encripttemp);
+        let bloqueventas = new cadena();
+        Object.assign(bloqueventas,encripttemp2);
+
+        let textoDot = bloqueventas.graficar();
+
+        document.getElementById("dot").value = textoDot;
+        var datosparseados = vis.parseDOTNetwork(textoDot);
+
+        var container = document.getElementById("graficas");
+        var data = {
+            nodes: datosparseados.nodes,
+            edges: datosparseados.edges
+        };
+        var options ={};
+
+        var network = new vis.Network(container,data,options);
+    }catch(error){
+        alert("ocurrio un error:"+error);
+    }
+
+}
+
+function graficarVenta(){
+    try{
+    let id = document.getElementById("idVenta").value;
+    let usuario = sessionStorage.getItem("username");
+
+    let ventatemp = JSON.parse(localStorage.getItem("ventas"));
+    ventatemp = CircularJSON.parse(ventatemp);
+    let encventas = new TablaVentas();
+    Object.assign(encventas,ventatemp);
+
+    let textoDot = encventas.graficaPorVendedor(id,usuario);
+
+    document.getElementById("dot").value = textoDot;
+    var datosparseados = vis.parseDOTNetwork(textoDot);
+
+    var container = document.getElementById("graficas");
+    var data = {
+        nodes: datosparseados.nodes,
+        edges: datosparseados.edges
+    };
+    var options ={};
+
+    var network = new vis.Network(container,data,options);
+    }catch(error){
+        alert("ocurrio un error: " +error);
     }
 }
 
 function cerrarSesion(){
     sessionStorage.removeItem('usuario');
 
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
+

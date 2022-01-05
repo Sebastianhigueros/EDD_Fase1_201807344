@@ -2,40 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/93f7daf82f.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="CSS/styles.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title></title>
 </head>
 <body>
-    <h1 class="h1 text-center">Carga Masiva</h1>
+    <h1 class=" h1 text-center"><i class="fas fa-user fa-2x"></i></h1>
     <nav style="background-color:  #1df00a;" class="navbar navbar-light">
-            <button class="dropbtn" onclick="cargarclientes()">Clientes</button>
-            <button class="dropbtn" onclick="cargarUsuarios()">vendedores</i></button>
-            <button class="dropbtn" onclick="cargarProveedores()">Proveedores</button>
-            <button class="dropbtn" onclick="cargarEventos()">Eventos</button>
-            <button class="dropbtn" onclick="cargarInventario()">Inventario</button>
-            <button class="dropbtn" onclick="cargarRutas()">Rutas</button>
-            <button class="dropbtn" onclick="cargarVentas2()">ventas sin Inventario</button>
-            <button class="dropbtn" onclick="cargarVentas()">ventas con Inventario</button>
+            <button class="dropbtn" onclick="agregarProductos()">agregar</button>
     </nav>
     <div class="carga">
         <form class="cargaform">
-            <div class="form-group">
-              <label for="exampleFormControlFile1">Example file input</label>
-              <input type="file" class="form-control-file" id="archivo">
+            <div class="loginForm">
+                <h2 class="h2 text-center">Datos del producto</h2>
+                <input type="text" id="idVenta" placeholder="Id de venta">
+                <input type="text" id="idproducto" placeholder="Id del producto">
+                <input type="text" id="cantidadprod" placeholder="cantidad">
             </div>
           </form>
     </div>
 
     <button onclick="regreso()" class="dropbtn fixed-bottom">Inicio</button>
 </body>
-<script>
-    function regreso(){
-        window.location.href = "administrador.html";
-    }
-</script>
 <script src="./Javascript/circularJson.js" type="text/javascript"></script>
 <script src="./Javascript/calendario.js" type="text/javascript"></script>
 <script src="./Javascript/clientes.js"  type="text/javascript"></script>
@@ -43,6 +33,10 @@
 <script src="./Javascript/Proveedores.js"  type="text/javascript"></script>
 <script src="./Javascript/usuarios.js"  type="text/javascript"></script>
 <script src="./Javascript/inventario.js"  type="text/javascript"></script>
-<script src="./Javascript/Rutas.js"  type="text/javascript"></script>
 <script src="./Javascript/ventas.js"  type="text/javascript"></script>
+<script>
+    function regreso(){
+        window.location.href = "vendedor.html"
+    }
+</script>
 </html>

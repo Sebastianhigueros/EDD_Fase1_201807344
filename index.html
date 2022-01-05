@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="CSS/styles.css">
     <title></title>
 </head>
-<body>
+<body onload="inicio()">
     <h1 class="titulo">Inicio de Sesion</h1>
     <div class="login">
         <form class="loginForm"> 
@@ -15,10 +15,27 @@
         </form>
     </div>
 </body>
+
+<script>
+        var inicio = (function(){
+        var ejecutado = false;
+        return function(){
+            if(!ejecutado){
+                ejecutado = true;
+                crearMemoria();
+            }
+        }
+    })
+</script>
+<script src="./Javascript/blockChain.js" type="text/javascript"></script>
+<script src="./Javascript/sjcl.js" type="text/javascript"></script>
+<script src="./Javascript/usuarios.js"  type="text/javascript"></script>
 <script src="./Javascript/circularJson.js" type="text/javascript"></script>
 <script src="./Javascript/calendario.js" type="text/javascript"></script>
 <script src="./Javascript/clientes.js"  type="text/javascript"></script>
 <script src="./Javascript/meses.js"  type="text/javascript"></script>
 <script src="./Javascript/Proveedores.js"  type="text/javascript"></script>
-<script src="./Javascript/usuarios.js"  type="text/javascript"></script>
+<script src="./Javascript/inventario.js"  type="text/javascript"></script>
+<script src="./Javascript/Rutas.js"  type="text/javascript"></script>
+<script src="./Javascript/ventas.js"  type="text/javascript"></script>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/93f7daf82f.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="CSS/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <title></title>
+</head>
+<body>
+    <h1 class=" h1 text-center">Reporte Rutas</i></h1>
+    <div id="graficas">
+
+    </div>
+    <textarea name="" id="dot" cols="30" rows="10"></textarea>
+    <div class="login">
+        <form class="loginForm"> 
+            <button type="button" class="inicio" onclick="graficarRutas()">Graficar</button>
+        </form>
+    </div>
+
+
+    <button onclick="regreso()" class="dropbtn fixed-bottom">Inicio</button>
+</body>
+<script src="./Javascript/circularJson.js" type="text/javascript"></script>
+<script src="./Javascript/calendario.js" type="text/javascript"></script>
+<script src="./Javascript/clientes.js"  type="text/javascript"></script>
+<script src="./Javascript/meses.js"  type="text/javascript"></script>
+<script src="./Javascript/Proveedores.js"  type="text/javascript"></script>
+<script src="./Javascript/usuarios.js"  type="text/javascript"></script>
+<script src="./Javascript/inventario.js"  type="text/javascript"></script>
+<script src="./Javascript/Rutas.js"  type="text/javascript"></script>
+<script>
+    function regreso(){
+        window.location.href = "administrador.html"
+    }
+</script>
+</html>
